@@ -1,0 +1,44 @@
+---
+apiVersion: loadbalancer.harvesterhci.io/v1beta1
+kind: IPPool
+metadata:
+  name: {{ $.Values.cluster_name }}-pool
+spec:
+  ranges:
+    - gateway: {{ .Values.control_plane.loadbalancer_gateway }}
+      rangeEnd: {{ .Values.control_plane.vip }}
+      rangeStart: {{ .Values.control_plane.vip }}
+      subnet: {{ .Values.control_plane.loadbalancer_subnet }}
+  selector: {}
+---
+apiVersion: loadbalancer.harvesterhci.io/v1beta1
+kind: LoadBalancer
+metadata:
+  name: {{ .Values.cluster_name }}-lb
+  namespace: default
+spec:
+  healthCheck:
+    failureThreshold: 2
+    port: 6443
+    successThreshold: 3
+    timeoutSeconds: 5
+    periodSeconds: 5
+  ipam: pool
+  ipPool: {{ .Values.cluster_name }}-pool
+  listeners:
+    - name: k8s-api
+      port: 6443
+      protocol: TCP
+      backendPort: 6443
+    - name: ingress
+      port: 443
+      protocol: TCP
+      backendPort: 443
+    - name: join
+      port: 9345
+      protocol: TCP
+      backendPort: 9345
+  workloadType: vm
+  backendServerSelector:
+    vm-group: 
+    - {{ $.Values.cluster_name }}

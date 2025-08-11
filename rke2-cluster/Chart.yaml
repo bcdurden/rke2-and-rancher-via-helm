@@ -1,0 +1,6 @@
+apiVersion: v2
+appVersion: 0.1.2
+description: RKE2 cluster designed for usage directly on Harvester
+name: rke2-cluster
+type: application
+version: 0.1.2

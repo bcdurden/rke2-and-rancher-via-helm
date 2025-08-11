@@ -1,0 +1,70 @@
+
+cluster_name: rke2-mgmt
+network_name: services
+network_namespace: default
+rke2_version: "v1.32.5+rke2r1"
+ssh_pub_key: <ssh pub key>
+
+vm:
+  airgapped_image: false
+  arch: amd64
+  image: slem-6.1
+  qemu_agent_enable: true
+  qemu_agent_install: true
+
+control_plane:
+  node_count: 3
+  cpu_count: 4
+  vip: 10.10.0.5
+  loadbalancer_gateway: 10.10.0.1
+  loadbalancer_subnet: 10.10.0.0/24
+  memory_gb: 16
+  files:
+  - content: |
+      apiVersion: helm.cattle.io/v1
+      kind: HelmChart
+      metadata:
+        name: cert-manager
+        namespace: default
+      spec:
+        bootstrap: false
+        targetNamespace: cert-manager
+        createNamespace: true
+        set:
+          crds.keep: "true"
+          crds.enabled: "true"
+        chart: cert-manager
+        repo: https://charts.jetstack.io
+        version: 1.17.2
+    owner: root
+    path: /var/lib/rancher/rke2/server/manifests/certmanager.yaml
+  - content: |
+      apiVersion: helm.cattle.io/v1
+      kind: HelmChart
+      metadata:
+        name: rancher
+        namespace: default
+      spec:
+        bootstrap: false
+        targetNamespace: cattle-system
+        createNamespace: true
+        set:
+          hostname: rancher.mydomain.com
+          replicas: 3
+          bootstrapPassword: admin
+          ingress.tls.source: rancher
+        chart: rancher
+        repo: https://releases.rancher.com/server-charts/stable
+        version: 2.11.1
+    owner: root
+    path: /var/lib/rancher/rke2/server/manifests/rancher.yaml
+  
+  ipam: dhcp
+  runcmd:
+  - systemctl stop firewalld
+  - systemctl disable firewalld
+  - systemctl mask firewalld
+  network: []
+
+worker:
+  node_count: 0
