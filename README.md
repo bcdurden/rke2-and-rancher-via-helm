@@ -10,6 +10,8 @@ It can build a community/cloud-sourced install as well as Prime or Carbide versi
 
 Provided here is an example of a [community install for dhcp](examples/community-install.yaml), and a [community install for static ips](examples/community-install-staticip.yaml)
 
+If you're wanting to pull images from a different registry (a la Rancher Prime or Carbide), see the [external registry example](./examples/community-install-registry.yaml)
+
 You will want to adjust these values to suit your environment.
 
 ## Known Bugs
