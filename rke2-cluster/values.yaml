@@ -5,17 +5,18 @@ shared_token: insecuretoken
 system_default_registry: ""       #! empty value: use embedded default
                                   #! non-empty value: use as regsitry to source rke2 runtime image from
                                   #! if your VM image contains the tarballs for RKE2, it will use those first
-registry_config: {}               #! If you wish to modify the registries.yaml file on your cluster, place your settings here
-#   configs:
-#     "registry.mydomain.com":
-#       auth:
-#         username: test
-#         password: test
-
 rke2_version: "v1.30.5+rke2r1"
 
 ssh_pub_key: ""                   #! the public ssh key to inject onto each node, required if you want to fetch a kubeconfig
 
+stig_enabled: true                #! enable STIG configuration for RKE2 and Rancher
+
+# registry_config:
+#   configs:
+#     "rgcrprod.azurecr.us":
+#       auth:
+#         username: test
+#         password: test
 
 vm:
   arch: amd64

@@ -1,6 +1,6 @@
 # Howto RKE2 with Helm
 
-I'm going to keep this very lean for now and expand later as more questions pop up from its use. The helmchart itself is packaged in a tarball for your ease of downloading: [rke2-cluster-0.1.2.tgz](./rke2-cluster-0.1.2.tgz) but if you wish to modify the chart or commit changes, it is also exposed in the [rke2-cluster directory](./rke2-cluster/).
+I'm going to keep this very lean for now and expand later as more questions pop up from its use. The helmchart itself is packaged in a tarball for your ease of downloading: [rke2-cluster-0.1.1.tgz](./rke2-cluster-0.1.1.tgz) but if you wish to modify the chart or commit changes, it is also exposed in the [rke2-cluster directory](./rke2-cluster/).
 
 The intention of this helmchart is to create an RKE2 cluster within Harvester without the use of complex scripting or other CD tools like Ansible or Terraofrm. This makes use of Harvester's Kubevirt-based CRDs as well as the Kubevip LoadBalancer. In this configuration, it also adds `HelmChart` CRDs to auto-install additional components into the cluster. These are generic yaml constructs, so really any K8S-friendly resource can be added. This makes it very flexible.
 
@@ -16,9 +16,9 @@ You will want to adjust these values to suit your environment.
 
 ## Known Bugs
 
-Due to what was a limitation in Harvester 1.3 handling Load Balancers and Helm's notorious issues with order of creation, there was a bug in place when removing the helm chart. It requires calling 'delete' twice because it will fail to delete the IPPool since the LoadBalancer is still attached to it.
+~~Due to what was a limitation in Harvester 1.3 handling Load Balancers and Helm's notorious issues with order of creation, there was a bug in place when removing the helm chart. It requires calling 'delete' twice because it will fail to delete the IPPool since the LoadBalancer is still attached to it.
 
-Now that the Harvester limitation was resolved in 1.5, we should be able to handle this case more elegantly with a Helm annotation, but that is not currently in place.
+Now that the Harvester limitation was resolved in 1.5, we should be able to handle this case more elegantly with a Helm annotation, but that is not currently in place.~~
 
 ## Install
 
@@ -27,7 +27,7 @@ Now that the Harvester limitation was resolved in 1.5, we should be able to hand
 Assuming your config is located in `values.yaml`, you can install the helmchart easily as any other helm package. Ensure your kubecontext is pointed at your Harvester cluster.
 
 ```bash
-helm upgrade -i rke2-mgmt rke2-cluster-0.1.2.tgz -f values.yaml
+helm upgrade -i rke2-mgmt rke2-cluster-0.1.1.tgz -f values.yaml
 ```
 
 ## Configuration
