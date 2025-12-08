@@ -16,9 +16,9 @@ You will want to adjust these values to suit your environment.
 
 ## Known Bugs
 
-~~Due to what was a limitation in Harvester 1.3 handling Load Balancers and Helm's notorious issues with order of creation, there was a bug in place when removing the helm chart. It requires calling 'delete' twice because it will fail to delete the IPPool since the LoadBalancer is still attached to it.
+~~Due to what was a limitation in Harvester 1.3 handling Load Balancers and Helm's notorious issues with order of creation, there was a bug in place when removing the helm chart. It requires calling 'delete' twice because it will fail to delete the IPPool since the LoadBalancer is still attached to it.~~
 
-Now that the Harvester limitation was resolved in 1.5, we should be able to handle this case more elegantly with a Helm annotation, but that is not currently in place.~~
+Now that the Harvester limitation was resolved in 1.5, we should be able to handle this case more elegantly with a Helm annotation, but that is not currently in place.
 
 ## Install
 
@@ -87,7 +87,7 @@ control_plane:
 
 Within `files` we can see the `HelmChart` objects. Eventually, these will be auto-rendered by Helm, but for now we have to manually edit them since they are strings. The most notable items are the Rancher version you want and any other config items. Here we are using the cert-manager auto-signed TLS cert but its very easy to do certs a different way (such as managing the secret directly).
 
-Ensure you are setting your Rancher replicas to match your Harvester node count and ensure you set your domain name appropriately.
+Ensure you are setting your Rancher replicas to match your Harvester node count and ensure you set your domain name appropriately. In the below example it is `rancher.mydomainname.com`. Since I don't own this domain name, I would need to set this value in my `/etc/hosts` to the VIP after installation to make sure my local web-browser could reach it. This is an ingress hostname, meaning if you do not use the hostname to reach Rancher, the Ingress will kick out your request as a 404.
 
 ```yaml
   files:
@@ -104,7 +104,6 @@ Ensure you are setting your Rancher replicas to match your Harvester node count 
         set:
           crds.keep: "true"
           crds.enabled: "true"
-          ingress.tls.source: rancher
         chart: cert-manager
         repo: https://charts.jetstack.io
         version: 1.17.2
@@ -127,9 +126,18 @@ Ensure you are setting your Rancher replicas to match your Harvester node count 
           ingress.tls.source: rancher
         chart: rancher
         repo: https://releases.rancher.com/server-charts/stable
-        version: 2.11.1
+        version: 2.12.3
     owner: root
     path: /var/lib/rancher/rke2/server/manifests/rancher.yaml
+```
+
+Here's the entry in my workstation's `/etc/hosts` file (I am using a MacBook). Since I made up this example domain, I need to set this locally. If I have an upstream DNS domain under my control for the hostname, I would need to set it there instead.
+
+```console
+> echo "10.2.0.20 rancher.mydomainname.com" | sudo tee >> /etc/hosts
+> cat /etc/hosts
+...
+10.2.0.20 rancher.mydomainname.com
 ```
 
 Finally we have the ipam configuration and runcmd field. Below we see the dhcp configuration. The runcmd field has commands designed for SLE Micro 6.1 in order to disable firewalld. If you're using a different VM image, you may not need these but you might need a different command.
@@ -170,11 +178,20 @@ Here's a static ip example snippet located in the [static-ip example](examples/c
 ...
 ```
 
+Since this is an RKE2 management cluster (ie. a hybrid cluster that only runs Rancher and no other workloads), we will not have ANY workers configured.
+
+So add this stanza to disable all workers (the default is 1):
+
+```yaml
+worker:
+  node_count: 0
+```
+
 # Example Install
 
 
 ```console
-$ helm upgrade -i rke2-mgmt rke2-cluster-0.1.2.tgz -f values.yaml
+$ helm upgrade -i rke2-mgmt rke2-cluster-0.1.1.tgz -f values.yaml
 Release "rke2-mgmt" does not exist. Installing it now.
 NAME: rke2-mgmt
 LAST DEPLOYED: Mon Aug 11 13:47:09 2025
