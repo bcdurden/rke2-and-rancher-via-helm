@@ -134,10 +134,10 @@ Ensure you are setting your Rancher replicas to match your Harvester node count 
 Here's the entry in my workstation's `/etc/hosts` file (I am using a MacBook). Since I made up this example domain, I need to set this locally. If I have an upstream DNS domain under my control for the hostname, I would need to set it there instead.
 
 ```console
-> echo "10.2.0.20 rancher.mydomainname.com" | sudo tee >> /etc/hosts
+> echo "10.10.0.5 rancher.mydomainname.com" | sudo tee >> /etc/hosts
 > cat /etc/hosts
 ...
-10.2.0.20 rancher.mydomainname.com
+10.10.0.5 rancher.mydomainname.com
 ```
 
 Finally we have the ipam configuration and runcmd field. Below we see the dhcp configuration. The runcmd field has commands designed for SLE Micro 6.1 in order to disable firewalld. If you're using a different VM image, you may not need these but you might need a different command.
