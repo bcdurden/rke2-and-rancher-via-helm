@@ -11,7 +11,11 @@ spec:
   resources:
     requests:
       storage: {{ $.Values.control_plane.node_disk_gb }}Gi
+{{- if (hasKey $.Values.vm "storage_class_name") }}
+  storageClassName: {{ $.Values.vm.storage_class_name }}
+{{- else }}
   storageClassName: longhorn-{{ $.Values.vm.image }}
+{{- end }}
   volumeMode: Block
 ---
 apiVersion: kubevirt.io/v1

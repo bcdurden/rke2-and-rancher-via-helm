@@ -9,6 +9,7 @@ vm:
   airgapped_image: false
   arch: amd64
   image: slem-6.1
+  # storage_class_name: my-backing-image-storage-class    #! used with 3rd party storage
   qemu_agent_enable: true
   qemu_agent_install: true
 

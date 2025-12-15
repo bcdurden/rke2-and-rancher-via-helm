@@ -29,7 +29,7 @@ vm:
   qemu_agent_enable: true         #! flag for enabling the qemu-agent
   airgapped_image: false          #! flag to alert helm that your VM image already has the RKE2 install script (and does not need to download it)
   rke2_containerdisk: ""          #! location of the containerdisk image containing RKE2 binary (ie. registry.${DOMAIN_NAME}/rancher/harvester-rke2-containerdisk)
-
+  # storageClassName: ""          #! this functions as a type of override for the vm image name when creating the PVC
 
 network_name: host
 network_namespace: default
